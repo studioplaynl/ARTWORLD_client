@@ -131,7 +131,7 @@
             <button
               type="button"
               id="playPause"
-              class="stopmotion__button button--play-pause"
+              class="stopmotion_button button--play-pause"
               on:click="{() => togglePlayPreview()}"
               on:keydown={(e) => e.key === 'Enter' && togglePlayPreview()}
             >
@@ -146,7 +146,7 @@
               type="button"
               on:click="{toggleOnionSkinning}"
               on:keydown={(e) => e.key === 'Enter' && toggleOnionSkinning()}
-              class="stopmotion__button button--toggle-onion-skinning status"
+              class="stopmotion_button button--toggle-onion-skinning status"
               class:status--on="{enableOnionSkinning}"
             >
               <img src="assets/SHB/svg/AW-icon-onion.svg" alt="Hide background" />
@@ -281,9 +281,9 @@
     background: red;
   }
 
-  .stopmotion__button {
+  .stopmotion_button {
     z-index: 13;
-    box-shadow: 5px 5px 0px #7300ed;
+    box-shadow: 3px 3px 0px #7300ed;
     cursor: pointer;
     padding: 0;
     margin: 0;
@@ -294,11 +294,11 @@
   }
 
   .status.status--on {
-    box-shadow: 5px 5px 0px #7300ed;
+    box-shadow: 3px 3px 0px #7300ed;
   }
 
   .status {
-    box-shadow: 5px 5px 0px rgba(115, 0, 237, 0.4);
+    box-shadow: 3px 3px 0px rgba(115, 0, 237, 0.4);
   }
 
   .status > img {
@@ -309,7 +309,7 @@
     opacity: 1;
   }
 
-  .stopmotion__button img {
+  .stopmotion_button img {
     width: 40px;
   }
 

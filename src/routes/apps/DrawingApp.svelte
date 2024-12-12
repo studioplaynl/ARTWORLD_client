@@ -1296,7 +1296,7 @@
     width: 100vw;
     background-color: rgb(115, 0, 237, 0.15);
   }
-  
+
   .cursor-canvas {
     pointer-events: none !important;
     width: 100vw;
@@ -1343,8 +1343,18 @@
     padding: 2px;
     border-radius: 50%;
     cursor: pointer;
-    object-fit: contain;
     background-color: white;
+  }
+
+  .icon {
+    object-fit: contain;
+  }
+
+  .tools-navbar button {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: transparent;
   }
 
   .iconImage {
@@ -1432,7 +1442,7 @@
     background-color: white;
     position: relative;
     overflow: hidden;
-    box-shadow: 5px 5px 0px #7300ed;
+    box-shadow: 3px 3px 0px #7300ed;
   }
 
   .canvas-box {
@@ -1454,7 +1464,7 @@
     background-color: #e0c1ff;
     overflow: hidden;
     padding: 4px;
-    box-shadow: 5px 5px 0px #7300ed;
+    box-shadow: 3px 3px 0px #7300ed;
     width: fit-content;
     height: fit-content;
     display: inline-flex;
@@ -1487,8 +1497,7 @@
     width: 100%;
     padding: 8px;
   }
-  
-  /* Landscape mode (width > height) */
+
   @media screen and (orientation: landscape) {
     .drawing-app-main-container {
       flex-direction: row;
@@ -1502,30 +1511,28 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      flex-direction: row;
       order: 2;
       height: 100vh;
     }
 
     .canvas-frame-container {
-      height: 95vh; 
-      width: auto; 
+      height: 95vh;
+      width: auto;
       margin: 0;
     }
 
     .stopmotion-controls {
       height: fit-content;
     }
-      
+
     .tools-container {
       margin: 0;
       display: flex;
       order: 1;
-      align-self: flex-end; /* this makes the tools container stay at the bottom of the screen */
+      align-self: flex-end;
     }
 
     .tools-navbar {
-      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -1533,12 +1540,8 @@
       height: 86vh;
       min-width: 45px;
       max-width: 60px;
-      padding: 16px 0; /* Add padding top/bottom to prevent cutoff */
-      overflow-y: auto; /* Allow scrolling if needed */
-    }
-
-    .tools-navbar button {
-      flex-shrink: 0; /* Prevent icon shrinking */
+      padding: 16px 0;
+      overflow-y: auto;
     }
 
     .tools-content {
@@ -1547,7 +1550,7 @@
       flex-direction: column;
       padding: 16px 8px;
       overflow-y: auto;
-      height: 86vh; /* Match navbar height */
+      height: 86vh;
       margin-right: -0.8rem;
       background-color: #e0c1ff;
     }
@@ -1591,26 +1594,26 @@
       flex-direction: column;
       align-items: center;
       order: 1;
-      width: 100%; /* Full width to allow children to expand */
+      width: 100%;
     }
 
     .stopmotion-controls {
       position: relative;
       background-color: #e0c1ff;
-      box-shadow: 5px 5px 0px #7300ed;
+      box-shadow: 3px 3px 0px #7300ed;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 91vw; 
-      max-width: 92vw; 
-      max-height: min-content; 
+      width: 91vw;
+      max-width: 92vw;
+      max-height: min-content;
       padding: 4px;
       margin: 0 auto;
     }
 
     .canvas-frame-container {
-      width: 95vw; /* Use viewport width */
-      max-width: 95vw; /* Ensure it doesn't exceed viewport */
+      width: 95vw;
+      max-width: 95vw;
       order: 2;
       margin: 0 auto;
     }
@@ -1674,152 +1677,23 @@
       margin-top: 12px;
       margin-bottom: 8px;
     }
-  }
-
-  .brush-options-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: start;
-    padding: 8px;
-    width: 100%;
-  }
-
-  .brush-options-container .icon {
-    min-width: 32px;
-    width: calc(33.33% - 8px);
-    max-width: 50px;
-    height: auto;
-    aspect-ratio: 1;
-    padding: 2px;
-    margin: 0;
-  }
-
-  .range-selector-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
-    width: 100%;
-  }
-
-  input[type='range'] {
-    flex: 1;
-    min-width: 100px;
-  }
-
-  .color-selection {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
-    width: 100%;
-  }
-
-  #eyeDropper {
-    min-width: 32px;
-    width: 40px;
-    max-width: 50px;
-    height: auto;
-    aspect-ratio: 1;
-    padding: 2px;
-  }
-
-  #drawing-color {
-    flex: 1;
-    min-width: 80px;
-    margin: 0;
-  }
-
-  .tools-navbar button {
-    border: 0;
-    cursor: pointer;
-    border-radius: 50%;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    margin: 0;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: transparent;
-  }
-
-  .currentSelected {
-    box-shadow: 3px 3px #7300ed;
-  }
-
-  @media screen and (orientation: portrait) {
-    .tools-content {
-      padding: 8px 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px; /* Reduce gap between sections */
-    }
-/* 
-    .brush-options-container {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 4px; 
-      padding: 4px;
-      justify-content: center;
-    } */
 
     .brush-options-container .icon {
-      min-width: 22px; /* Make icons smaller */
+      min-width: 22px;
       max-width: 32px;
-      width: calc(25% - 4px); /* 4 icons per row with small gap */
+      width: calc(25% - 4px);
       height: auto;
       padding: 2px;
     }
 
-    .brush-options-container {
-      display: flex;
-      flex-direction: row;
-      gap: 4px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .range-selector-container {
-      padding: 2px;
-      gap: 4px;
-      margin: 0;
-      margin-top: 12px;
-      margin-bottom: 8px;
-    }
-
-    .color-selection {
-      padding: 2px;
-      gap: 4px;
-      margin: 0;
-      margin-top: 12px;
-      margin-bottom: 8px;
-    }
-
-    .range-selector-container {
-      padding: 4px;
-      gap: 4px;
-    }
-
-    .color-selection {
-      padding: 4px;
-      gap: 4px;
-    }
-
     #eyeDropper {
-      min-width: 28px; /* Match brush icon size */
+      min-width: 28px;
       width: 28px;
       height: 28px;
     }
 
     .circle-box-small {
-      padding: 3px; /* Smaller circle indicators */
+      padding: 3px;
     }
 
     .circle-box-big {
