@@ -1472,6 +1472,7 @@
     display: flex;
     justify-content: flex-start;
     width: 100%;
+    max-height: 60%;
   }
 
   #eyeDropper {
@@ -1486,12 +1487,6 @@
     cursor: pointer;
     object-fit: contain;
     background-color: white;
-  }
-
-  #drawing-color {
-    width: 50%;
-    display: block;
-    margin: 8px auto;
   }
 
   .currentSelected {
@@ -1553,8 +1548,7 @@
     opacity: 0.3;
   }
 
-  .brush-options-container,
-  .color-selection {
+  .brush-options-container {
     width: 100%;
     padding: 8px;
   }
@@ -1739,11 +1733,8 @@
     }
 
     .color-selection {
-      padding: 2px;
-      gap: 4px;
-      margin: 0;
-      margin-top: 12px;
-      margin-bottom: 8px;
+      flex-direction: row;
+      align-items: center;
     }
 
     #eyeDropper {

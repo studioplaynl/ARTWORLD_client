@@ -234,6 +234,7 @@
     flex-direction: column;
     gap: 12px;
     align-items: center;
+    width: 100%;
   }
 
   .color-picker {
