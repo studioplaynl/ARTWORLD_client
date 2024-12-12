@@ -1128,20 +1128,15 @@
                   />
                 </div>
 
-                <div class="range-selector-container">
-                  <div class="circle-box-small"></div>
-                  <input
-                    type="range"
-                    min="{brushSliderMin}"
-                    max="{brushSliderMax}"
-                    id="drawing-line-width"
-                    title="Set drawing thickness"
-                    bind:value="{lineWidth}"
-                    on:input="{disableColorPicker}"
-                    on:focus="{disableColorPicker}"
-                    on:blur="{disableColorPicker}"
+                <div class="range-selector-container" style="--selected-color: {drawingColor}">
+                  <div class="circle-box-small" style="border-color: {drawingColor}"></div>
+                  <input 
+                    type="range" 
+                    min="{brushSliderMin}" 
+                    max="{brushSliderMax}" 
+                    bind:value="{lineWidth}" 
                   />
-                  <div class="circle-box-big"></div>
+                  <div class="circle-box-big" style="border-color: {drawingColor}"></div>
                 </div>
 
                 <div class="color-selection">
@@ -1280,6 +1275,109 @@
   </div>
 
 <style>
+  /* scale slider */
+  .range-selector-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 4px 0px;
+    margin: 8px 0;
+    position: relative;
+  }
+
+  /* Add tapered line */
+  .range-selector-container::before {
+    content: '';
+    position: absolute;
+    left: 0px;
+    right: 10px;
+    height: 14px;
+    background: linear-gradient(to right, 
+      grey 0%,
+      black 100%
+    );
+    clip-path: polygon(0 45%, 100% 0, 100% 100%, 0 55%);
+    opacity: 0.3;
+    z-index: 0;
+  }
+
+  .circle-box-small {
+    min-width: 12px;
+    min-height: 12px;
+    border: 2px solid var(--selected-color);
+    border-radius: 50%;
+    background-color: white;
+    position: relative;
+    z-index: 1;
+  }
+
+  .circle-box-big {
+    min-width: 24px;
+    min-height: 24px;
+    aspect-ratio: 1;
+    border: 2px solid var(--selected-color);
+    border-radius: 50%;
+    background-color: white;
+    position: relative;
+    z-index: 1;
+  }
+
+  input[type='range'] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    margin-left: -10px;  /* Added to fix offset */
+    margin-right: -10px; /* Added to fix offset */
+    z-index: 1;         /* Ensure it's above the tapered line */
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--selected-color);
+    border: 2px solid white;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  input[type='range']::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px #e0c1ff;
+  }
+
+  input[type='range']::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background:var(--selected-color);
+    border: 2px solid white;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  input[type='range']::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px #e0c1ff;
+  }
+
+  input[type='range']::-moz-range-track {
+    background: #e0c1ff;
+    height: 4px;
+    border-radius: 4px;
+  }
+  /* end scale slider */
+  
   * {
     box-sizing: border-box;
     padding: 0;
@@ -1401,43 +1499,6 @@
     padding: 0;
   }
 
-  .range-selector-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: 30px;
-    margin-bottom: 30px;
-  }
-
-  .circle-box-small {
-    border: solid 2px black;
-    border-radius: 50%;
-    padding: 5px;
-  }
-
-  .circle-box-big {
-    border: solid 2px black;
-    border-radius: 50%;
-    padding: 10px;
-  }
-
-  input[type='range'] {
-    -moz-appearance: none;
-    border-radius: 6px;
-    border: 4px solid #7300ed;
-    height: 4px;
-    margin: 0 10px;
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
-    background-color: black;
-    border: 1px solid black;
-    border-radius: 50%;
-    height: 15px;
-    width: 15px;
-  }
-
   .canvas-frame-container {
     background-color: white;
     position: relative;
@@ -1492,7 +1553,6 @@
   }
 
   .brush-options-container,
-  .range-selector-container,
   .color-selection {
     width: 100%;
     padding: 8px;
@@ -1502,8 +1562,8 @@
     .drawing-app-main-container {
       flex-direction: row;
       align-items: center;
-      justify-content: end;
-      padding-right: 8px;
+      justify-content: end;  
+      padding-right: 0; 
       height: 100vh;
     }
 
@@ -1542,6 +1602,7 @@
       display: flex;
       order: 1;
       align-self: flex-end;
+      margin-right: -2px;    /* Added to align with border */
     }
 
     .tools-content {
@@ -1551,7 +1612,7 @@
       padding: 16px 8px;
       overflow-y: auto;
       height: 86vh;
-      margin-right: 0; 
+      margin-right: 0;       /* Changed from -0.8rem */
       background-color: #e0c1ff;
     }
 
@@ -1569,16 +1630,12 @@
     }
 
     .brush-options-container .icon {
-      width: clamp(28px, 5vw, 60px);
+      min-width: 28px;
+      max-width: 45px;
+      width: clamp(28px, 3vw, 45px);  /* Responsive width between 28px and 45px */
       height: auto;
       aspect-ratio: 1;
       padding: 2px;
-    }
-
-    .range-selector-container {
-      flex-direction: row;
-      align-items: center;
-      gap: 10px;
     }
 
     .color-selection {
@@ -1672,18 +1729,12 @@
     }
 
     .brush-options-container .icon {
-      width: clamp(28px, 10vw, 60px);
+      min-width: 28px;
+      max-width: 40px;
+      width: clamp(28px, 8vw, 40px);
       height: auto;
       aspect-ratio: 1;
       padding: 2px;
-    }
-
-    .range-selector-container {
-      padding: 2px;
-      gap: 4px;
-      margin: 0;
-      margin-top: 12px;
-      margin-bottom: 8px;
     }
 
     .color-selection {
@@ -1698,14 +1749,6 @@
       min-width: 28px;
       width: 28px;
       height: 28px;
-    }
-
-    .circle-box-small {
-      padding: 3px;
-    }
-
-    .circle-box-big {
-      padding: 8px;
     }
   }
 </style>
