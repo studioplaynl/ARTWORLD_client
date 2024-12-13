@@ -271,6 +271,7 @@
 
     drawingCanvas = new fabric.Canvas(drawingCanvasEl, {
       isDrawingMode: true,
+      willReadFrequently: true
     });
     drawingCanvas.set('width', baseSize);
     drawingCanvas.set('height', baseSize);
