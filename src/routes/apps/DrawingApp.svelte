@@ -1,22 +1,16 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
   import { get, writable } from 'svelte/store';
-
-  // Important: keep the eslint comment below intact!
-  // eslint-disable-next-line import/no-relative-packages
   import { fabric } from 'fabric-with-erasing';
   import { setLoader } from '../../helpers/nakamaHelpers';
   import { Profile } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
-  // import NameGenerator from '../components/NameGenerator.svelte';
   import {
     hasSpecialCharacter,
     removeSpecialCharacters,
   } from '../../validations';
   import { dlog } from '../../helpers/debugLog';
   import ColorPicker from '../components/ColorPicker.svelte';
-
-  // src/routes/components/ColorPicker.svelte
 
   let hex = '#000000';
 
@@ -35,16 +29,8 @@
       svgIcon.style.borderColor = drawingColor;
     }
   }
-  $: {
-    if (drawingCanvas) {
-      if (eyeDropper) {
-        drawingCanvas.isDrawingMode = false;
-      } else {
-        drawingCanvas.isDrawingMode = true;
-      }
-    }
-  }
-  // export let showStopMotionControls = false;
+
+  $: console.log('selectedBrush: ', selectedBrush);
 
   export let file; // file is currentFile in the appLoader (synced)
   export let data;
@@ -125,7 +111,7 @@
   $: {
     // Respond to changes in window size
     if (innerWidth && innerHeight) {
-      let canvasEdge = 32; // Reduced edge spacing
+      let canvasEdge = 16; // Reduced edge spacing
 
       // Calculate available space considering orientation
       if (window.matchMedia("(orientation: landscape)").matches) {
@@ -158,6 +144,11 @@
       cursorCanvas.setZoom(scaleRatio);
       drawingCanvas.setZoom(scaleRatio);
       antiFlickerCanvas.setZoom(scaleRatio);
+
+      // hoverCanvas.width = canvasHeight;
+      // hoverCanvas.height = canvasHeight;
+      // hoverCanvas.style.top = `${drawingCanvasEl.offsetTop}px`;
+      // hoverCanvas.style.left = `${drawingCanvasEl.offsetLeft}px`;
     }
   }
 
@@ -281,7 +272,7 @@
     antiFlickerCanvas.set('height', baseSize);
 
     eraseBrush = new fabric.EraserBrush(drawingCanvas);
-
+    
     // Set frameNumber on object, to refer to when deleting frames
     drawingCanvas.on('path:created', () => {
       // const idx = drawingCanvas.getObjects().length - 1;
@@ -295,8 +286,6 @@
       // increment changes
       changes++;
 
-      // antiFlickerCanvasContext.canvas.hidden = false;
-      // antiFlickerCanvasContext.canvas.hidden = false;
       putDrawingCanvasIntoAntiFlickerCanvas();
 
       antiFlickerCanvasContext.canvas.hidden = false;
@@ -328,68 +317,20 @@
     cursorCanvas.add(mouseCursor);
     drawingCanvas.on('mouse:down', (evt) => {
       if (eyeDropper) {
-        const canvasScaleRatio = canvasHeight / baseSize;
-        // get color of the canvas under the mouse
-        drawingCanvas.set('preserveObjectStacking', false);
-        const ctx = drawingCanvas.contextContainer;
-        const pointer = drawingCanvas.getPointer(evt.e);
-
-        const pixelData = ctx.getImageData(
-          Math.round(pointer.x * canvasScaleRatio),
-          Math.round(pointer.y * canvasScaleRatio),
-          1,
-          1,
-        ).data;
-
-        const colorPicker = document.getElementById('drawing-color');
-        hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
-        colorPicker.value = hex;
+        hex = getColorAtPoint(evt);
+        // Update the eyedropper icon border
+        const svgIcon = document.getElementById('eyeDropper');
+        svgIcon.style.borderColor = hex;
         eyeDropper = false;
+        return;
       }
     });
 
-    // redraw cursor on new mouse position when moved
+    // redraw cursor on new mouse position when moved and move is pressed
     // eslint-disable-next-line func-names
     drawingCanvas.on('mouse:move', function (evt) {
-      if (eyeDropper) {
-        const canvasScaleRatio = canvasHeight / baseSize;
-
-        // get color of the canvas under the mouse
-        drawingCanvas.set('preserveObjectStacking', false);
-        const ctx = drawingCanvas.contextContainer;
-
-        const pointer = drawingCanvas.getPointer(evt.e);
-
-        const pixelData = ctx.getImageData(
-          Math.round(pointer.x * canvasScaleRatio),
-          Math.round(pointer.y * canvasScaleRatio),
-          1,
-          1,
-        ).data;
-
-        const colorPicker = document.getElementById('drawing-color');
-        hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
-        colorPicker.value = hex;
-        const svgIcon = document.getElementById('eyeDropper');
-        svgIcon.style.borderColor = hex;
-
-        return mouseCursor
-          .set({
-            top: -100,
-            left: -100,
-          })
-          .setCoords()
-          .canvas.renderAll();
-        // return mouseCursor
-        //   .set({
-        //     top: pointer.y,
-        //     left: pointer.x,
-        //   })
-        //   .setCoords()
-        //   .canvas.renderAll();
-      }
+      if (!eyeDropper) {
       const mouse = this.getPointer(evt.e);
-
       return mouseCursor
         .set({
           top: mouse.y,
@@ -397,7 +338,37 @@
         })
         .setCoords()
         .canvas.renderAll();
+      }
     });
+
+    function getColorAtPoint(evt) {
+      // Create temporary canvas at base size
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = baseSize;
+      tempCanvas.height = baseSize;
+      const tempCtx = tempCanvas.getContext('2d');
+
+      // Get mouse position in canvas coordinates
+      const pointer = drawingCanvas.getPointer(evt.e);
+      console.log('pointer: ', pointer);
+
+      // Convert pointer coordinates from scaled to base size
+      const baseX = Math.round((pointer.x));
+      const baseY = Math.round((pointer.y));
+
+      // Draw current frame from framesArray as background
+      const frameImg = new Image();
+      frameImg.src = framesArray[currentFrame - 1];
+      tempCtx.drawImage(frameImg, 0, 0);
+
+      // Get color at point
+      const pixelData = tempCtx.getImageData(baseX, baseY, 1, 1).data;
+      console.log('pixelData: ', pixelData);
+      // Convert to hex
+      const hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+      
+      return hex;
+    }
 
     applyBrush = (brushType) => {
       if (typeof brushType === 'string') selectedBrush = brushType;
@@ -971,7 +942,6 @@
  export function clearCanvas() {
     drawingCanvas.clear();
     changes = 0;
-    // saveCanvas.clear();
     dispatch('clearCanvas');
   }
   /// //////////// select functions end //////////////////
@@ -1018,6 +988,9 @@
 
   function toggleEyedropperState() {
     eyeDropper = !eyeDropper;
+    if (!eyeDropper) {
+      // applyBrush(selectedBrush);
+    }
   }
 
   function disableColorPicker() {
@@ -1505,6 +1478,8 @@
 
   .canvas-box {
     position: relative;
+    pointer-events: all;
+    z-index: 1;
   }
 
   .canvas-onion {
