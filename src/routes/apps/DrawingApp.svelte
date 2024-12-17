@@ -62,6 +62,87 @@
     switchingFrame();
   }
 
+  // Add this near the top of your script section
+  let canvasContainer;
+  let canvasScaleRatio;
+
+  // Add this function to handle mouse movement
+  function handleMouseMove(evt) {
+    if (!drawingCanvas) return;
+    
+    // Get canvas container bounds
+    const bounds = canvasContainer.getBoundingClientRect();
+
+    // Calculate relative mouse position within container
+    const relativeX = evt.clientX - bounds.left;
+    const relativeY = evt.clientY - bounds.top;
+    
+    // Scale coordinates to match canvas coordinate space
+    const scaledX = relativeX * (baseSize / canvasHeight);
+    const scaledY = relativeY * (baseSize / canvasHeight);
+
+    // Update cursor position
+    if (cursorCanvas && mouseCursor) {
+      mouseCursor
+        .set({
+          top: scaledY,
+          left: scaledX,
+        })
+        .setCoords()
+        .canvas.renderAll();
+    }
+
+    // Handle eyedropper functionality
+    if (eyeDropper && drawingCanvas) {
+      hex = getColorAtPoint(scaledX, scaledY);
+      const svgIcon = document.getElementById('eyeDropper');
+      svgIcon.style.borderColor = hex;
+    }
+  }
+
+  // Add this function to handle mouse leave
+  function handleMouseLeave() {
+    console.log('handleMouseLeave');
+    if (cursorCanvas && mouseCursor) {
+      mouseCursor
+        .set({
+          top: -100,
+          left: -100,
+        })
+        .setCoords()
+        .canvas.renderAll();
+    }
+  }
+
+  function getColorAtPoint(baseX, baseY) {
+    // Create temporary canvas at base size
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = baseSize;
+    tempCanvas.height = baseSize;
+    const tempCtx = tempCanvas.getContext('2d');
+
+    // Draw current frame from framesArray as background
+    const frameImg = new Image();
+    frameImg.src = framesArray[currentFrame - 1];
+    tempCtx.drawImage(frameImg, 0, 0);
+
+   
+    // Get color at point
+    const pixelData = tempCtx.getImageData(baseX, baseY, 1, 1).data;
+
+    // Check if pixel is transparent (alpha = 0)
+    if (pixelData[3] === 0) {
+      return '#FFFFFF'; // or whatever default color you want for transparent pixels
+    }
+
+    // Convert to hex if we have valid color data
+    if (pixelData[0] !== undefined && pixelData[1] !== undefined && pixelData[2] !== undefined) {
+      return rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+    }
+
+    return '#FFFFFF'; // default color if no valid color data
+  }
+
   function switchingFrame() {
     if (drawingCanvas) {
       if (drawingCanvasUndoArray) {
@@ -317,12 +398,7 @@
     cursorCanvas.add(mouseCursor);
     drawingCanvas.on('mouse:down', (evt) => {
       if (eyeDropper) {
-        hex = getColorAtPoint(evt);
-        // Update the eyedropper icon border
-        const svgIcon = document.getElementById('eyeDropper');
-        svgIcon.style.borderColor = hex;
-        eyeDropper = false;
-        return;
+        toggleEyedropperState();
       }
     });
 
@@ -340,35 +416,6 @@
         .canvas.renderAll();
       }
     });
-
-    function getColorAtPoint(evt) {
-      // Create temporary canvas at base size
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = baseSize;
-      tempCanvas.height = baseSize;
-      const tempCtx = tempCanvas.getContext('2d');
-
-      // Get mouse position in canvas coordinates
-      const pointer = drawingCanvas.getPointer(evt.e);
-      console.log('pointer: ', pointer);
-
-      // Convert pointer coordinates from scaled to base size
-      const baseX = Math.round((pointer.x));
-      const baseY = Math.round((pointer.y));
-
-      // Draw current frame from framesArray as background
-      const frameImg = new Image();
-      frameImg.src = framesArray[currentFrame - 1];
-      tempCtx.drawImage(frameImg, 0, 0);
-
-      // Get color at point
-      const pixelData = tempCtx.getImageData(baseX, baseY, 1, 1).data;
-      console.log('pixelData: ', pixelData);
-      // Convert to hex
-      const hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
-      
-      return hex;
-    }
 
     applyBrush = (brushType) => {
       if (typeof brushType === 'string') selectedBrush = brushType;
@@ -988,8 +1035,13 @@
 
   function toggleEyedropperState() {
     eyeDropper = !eyeDropper;
-    if (!eyeDropper) {
-      // applyBrush(selectedBrush);
+    if (eyeDropper) {
+      // Disable drawing mode when eyedropper is active
+      drawingCanvas.isDrawingMode = false;
+    } else {
+      // Re-enable drawing mode when eyedropper is deactivated
+      drawingCanvas.isDrawingMode = true;
+      applyBrush(selectedBrush); // Reapply the selected brush
     }
   }
 
@@ -1036,6 +1088,9 @@
 
         <div
           class="canvas-box"
+          bind:this={canvasContainer}
+          on:mousemove={handleMouseMove}
+          on:mouseleave={handleMouseLeave}
           style="
             left: 0px;
             pointer-events: {enableEditor ? 'all' : 'none'};
