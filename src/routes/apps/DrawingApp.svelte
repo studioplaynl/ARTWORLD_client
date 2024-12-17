@@ -13,6 +13,8 @@
   import ColorPicker from '../components/ColorPicker.svelte';
 
   let hex = '#000000';
+  let prevColor = '#000000';
+  let changePrevColor = true;
 
   let eyeDropper = false;
   $: {
@@ -398,6 +400,7 @@
     cursorCanvas.add(mouseCursor);
     drawingCanvas.on('mouse:down', (evt) => {
       if (eyeDropper) {
+      changePrevColor = true;
         toggleEyedropperState();
       }
     });
@@ -1036,9 +1039,14 @@
   function toggleEyedropperState() {
     eyeDropper = !eyeDropper;
     if (eyeDropper) {
+      prevColor = hex;
+      changePrevColor = false;
       // Disable drawing mode when eyedropper is active
       drawingCanvas.isDrawingMode = false;
     } else {
+      if (!changePrevColor) {
+        hex = prevColor;
+      }
       // Re-enable drawing mode when eyedropper is deactivated
       drawingCanvas.isDrawingMode = true;
       applyBrush(selectedBrush); // Reapply the selected brush
