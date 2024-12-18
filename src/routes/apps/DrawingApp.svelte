@@ -250,6 +250,7 @@
   let mouseCursor;
   // let drawingClipboard;
   let lineWidth = 100;
+  let prevLineWidth = lineWidth;
   let drawingColor = hex;
   let currentTab = 'draw';
   let showOptionbox = true;
@@ -345,7 +346,9 @@
 
     drawingCanvas = new fabric.Canvas(drawingCanvasEl, {
       isDrawingMode: true,
-      willReadFrequently: true
+      willReadFrequently: true,
+      cursor: 'none',
+      freeDrawingCursor: 'none',
     });
     drawingCanvas.set('width', baseSize);
     drawingCanvas.set('height', baseSize);
@@ -1035,6 +1038,19 @@
         break;
     }
   }
+  function changeBrushSize(newSize) {
+    // Update the lineWidth variable
+    lineWidth = newSize;
+
+    // Call updateLineWidth to recalculate the logarithmic value
+    brushWidthLogarithmic = updateLineWidth(lineWidth);
+
+    // Optionally, you can also update the Fabric.js brush width directly
+    if (drawingCanvas) {
+        const brush = drawingCanvas.freeDrawingBrush;
+        brush.width = parseInt(brushWidthLogarithmic, 10) || 1; // Set the brush width
+    }
+}
 
   function toggleEyedropperState() {
     eyeDropper = !eyeDropper;
@@ -1043,6 +1059,20 @@
       changePrevColor = false;
       // Disable drawing mode when eyedropper is active
       drawingCanvas.isDrawingMode = false;
+      drawingCanvas.defaultCursor = 'crosshair';
+      // drawingCanvas.hoverCursor = 'none';          // Cursor when hovering over objects
+      // drawingCanvas.moveCursor = 'none';           // Cursor when moving objects
+      // drawingCanvas.rotationCursor = 'none';       // Cursor when rotating objects
+      // drawingCanvas.notAllowedCursor = 'none';     // Cursor for disabled actions
+
+      drawingCanvas.selection = false;
+      drawingCanvas.skipTargetFind = true;
+
+      // Set cursor size to 10% of canvas height
+      prevLineWidth = lineWidth;
+      lineWidth = canvasHeight * 0.5; // 10% of canvas height
+      // changeBrushSize(newSize)
+
     } else {
       if (!changePrevColor) {
         hex = prevColor;
@@ -1050,6 +1080,7 @@
       // Re-enable drawing mode when eyedropper is deactivated
       drawingCanvas.isDrawingMode = true;
       applyBrush(selectedBrush); // Reapply the selected brush
+      lineWidth = prevLineWidth;
     }
   }
 
