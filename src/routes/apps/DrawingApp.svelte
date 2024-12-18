@@ -1071,8 +1071,7 @@
       // Set cursor size to 10% of canvas height
       prevLineWidth = lineWidth;
       lineWidth = canvasHeight * 0.5; // 10% of canvas height
-      // changeBrushSize(newSize)
-
+      changeBrushSize(lineWidth);
     } else {
       if (!changePrevColor) {
         hex = prevColor;
