@@ -25,10 +25,9 @@
   } from '../../helpers/nakamaHelpers';
   import { PlayerHistory } from '../game/playerState';
   import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC, isValidApp, DEFAULT_APP } from '../../constants';
-
   import AppContainer from './AppContainer.svelte';
   import Preview from '../apps/Preview.svelte';
-
+  
   /**
    * - Check userId === $Profile.userId : edit; preview only
    * /drawing?userId=UUID&key=KEY ---> Object met oa URL
@@ -63,6 +62,7 @@
   $: {
     currentFile.displayName = displayName;
   }
+
 
   /** Subscribe to 'loc', as changes to location AND querystring should trigger this evaluation */
   const unsubscribe = loc.subscribe(async () => {
@@ -107,8 +107,6 @@
 
     // Reset local variables
     currentFile = { loaded: false };
-
-
 
     data = null;
     changes = 0;
@@ -319,9 +317,7 @@
     dlog('currentFile loaded: ', currentFile);
   }
 
-
   // Utility functions
-
   /** Load file information from server and return object with */
   async function getFileInformation(collectionName, userId, key) {
     if (userId && key) {
@@ -410,6 +406,7 @@
   on:close="{() => saveData(true)}"
   on:saveToFile="{() => saveToFile()}"
   on:clearCanvasBegin="{() => clearCanvas()}"
+  {changes}
 >
   {#if (userIsOwner && currentFile.loaded) || currentFile.new}
     {#if $CurrentApp === 'drawing' || $CurrentApp === 'house' || $CurrentApp === 'flowerchallenge'}

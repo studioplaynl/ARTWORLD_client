@@ -3,8 +3,9 @@
   import { createEventDispatcher } from 'svelte';
 
   export let open = false;
-
+  export let changes = 0;
   const dispatch = createEventDispatcher();
+
 </script>
 
 {#if open}
@@ -20,15 +21,22 @@
           dispatch('close');
         }}"
       >
-        <img alt="Close" src="assets/SHB/svg/AW-icon-check.svg" />
+        {#if changes === 0}
+          <img alt="Close" src="assets/SHB/svg/AW-icon-plus.svg" class="rotated-icon" />
+        {:else}
+          <img alt="Close" src="assets/SHB/svg/AW-icon-check.svg" />
+        {/if}
       </button>
+      {#if changes > 0}
       <button 
         class="control-button"
         on:click={() => dispatch('clearCanvasBegin')}
       >
-        <img alt="Clear canvas" src="assets/SHB/svg/AW-icon-trashcan.svg" class="red-icon" />
-      </button>
+          <img alt="Clear canvas" src="assets/SHB/svg/AW-icon-trashcan.svg" class="red-icon" />
+        </button>
+      {/if}
     </div>
+   
     <div class="app">
       <slot />
     </div>
@@ -41,6 +49,12 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+  }
+
+  .rotated-icon {
+    transform: rotate(45deg);
+    /* Optional: Adjust the transform origin if needed */
+    transform-origin: center; /* This ensures the rotation happens around the center of the icon */
   }
 
   .app-container {
