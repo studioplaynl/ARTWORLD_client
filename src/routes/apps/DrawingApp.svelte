@@ -416,20 +416,52 @@
         // Get coordinates based on event type
         let pageX, pageY;
         if (evt.e.type.startsWith('touch')) {
-          // Touch event - use first touch point
           pageX = evt.e.touches[0].pageX;
           pageY = evt.e.touches[0].pageY;
         } else {
-          // Mouse event
           pageX = evt.e.pageX;
           pageY = evt.e.pageY;
         }
 
-        // Update position
-        confirmIconPosition = {
-          top: `${pageY}px`,
-          left: `${pageX}px`,
-        };
+        // Get window dimensions
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        // Calculate icon dimensions (approximate)
+        const iconWidth = 150; // Total width of confirmation panel
+        const iconHeight = 50; // Total height of confirmation panel
+        const verticalOffset = 20; // Offset to raise icons higher from cursor
+
+        // Adjust position if too close to edges
+        let left = pageX;
+        let top = pageY;
+
+        // Check right edge
+        if (left + iconWidth/2 > windowWidth) {
+          left = windowWidth - iconWidth/2;
+          top -= verticalOffset; // Raise icons when at horizontal edge
+        }
+        // Check left edge
+        if (left - iconWidth/2 < 0) {
+          left = iconWidth/2;
+          top -= verticalOffset; // Raise icons when at horizontal edge
+        }
+        // Check top edge (icons appear above cursor)
+        if (top - iconHeight < 0) {
+          // Place below cursor instead of above
+          confirmIconPosition = {
+            top: `${top + 20}px`,
+            left: `${left}px`,
+            transform: 'translate(-50%, 0)'
+          };
+        } else {
+          // Default position above cursor
+          confirmIconPosition = {
+            top: `${top}px`,
+            left: `${left}px`,
+            transform: 'translate(-50%, -100%)'
+          };
+        }
 
         showConfirmIcons = true;
       }
@@ -1131,7 +1163,6 @@
 
   // Function to accept the selected color
   function acceptColor() {
-    // drawingColor = selectedColor;
     prevColor = selectedColor;
     showConfirmIcons = false; // Hide confirmation icons
     toggleEyedropperState();
@@ -1251,9 +1282,22 @@
                 </div>
 
                 <div class="color-selection">
-                  <button on:click="{() => toggleEyedropperState() }">
-                    <img id="eyeDropper" alt="eyeDropper" src="assets/svg/eyeDropper.svg" />
-                  </button>
+                  <div class="eyedropper-container">
+                    {#if eyeDropper}
+                      <img 
+                        class="eyedropper-active-indicator" 
+                        src="assets/svg/eyeDropper.svg" 
+                        alt="eyeDropper active"
+                      />
+                    {/if}
+                    <button on:click="{() => toggleEyedropperState() }">
+                      <img 
+                        id="eyeDropper" 
+                        alt="eyeDropper" 
+                        src="assets/svg/eyeDropper.svg" 
+                      />
+                    </button>
+                  </div>
 
                   <ColorPicker 
                     bind:color={drawingColor}
@@ -1384,9 +1428,32 @@
   </div>
 
   {#if showConfirmIcons}
-    <div class="confirmation-icons" style="top: {confirmIconPosition.top}; left: {confirmIconPosition.left};">
-      <button on:click={acceptColor}>✔️</button> <!-- Accept icon -->
-      <button on:click={rejectColor}>❌</button> <!-- Reject icon -->
+    <div 
+      class="confirmation-icons" 
+      style="
+        top: {confirmIconPosition.top}; 
+        left: {confirmIconPosition.left}; 
+        transform: {confirmIconPosition.transform};
+      "
+    >
+      <button on:click={acceptColor}>
+        <img 
+          src="assets/SHB/svg/AW-icon-check.svg" 
+          alt="Accept" 
+          class="icon"
+        />
+      </button>
+      <div 
+        class="color-preview" 
+        style="background-color: {selectedColor};"
+      ></div>
+      <button on:click={rejectColor}>
+        <img 
+          src="assets/SHB/svg/AW-icon-trash.svg" 
+          alt="Reject" 
+          class="icon"
+        />
+      </button>
     </div>
   {/if}
 
@@ -1590,15 +1657,30 @@
     max-height: 60%;
   }
 
+  .eyedropper-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .eyedropper-active-indicator {
+    position: absolute;
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
+    top: -2rem;  /* Adjust this value to position the indicator */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* Ensure existing eyeDropper styles are maintained */
   #eyeDropper {
-    min-width: 32px;
-    width: 40px;
-    max-width: 50px;
-    height: auto;
-    aspect-ratio: 1;
-    padding: 2px;
-    border-radius: 50%;
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
     border: 5px solid black;
+    border-radius: 50%;
     cursor: pointer;
     object-fit: contain;
     background-color: white;
@@ -1861,17 +1943,23 @@
     }
   }
 
-  .confirmation-icons {
-    position: absolute; /* Position it appropriately */
-    z-index: 10; /* Ensure it's above other elements */
-    transform: translate(-50%, -100%); /* Center the icons above the cursor */
+    .color-preview {
+    width: 24px;
+    height: 24px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+    flex-shrink: 0; /* Prevent the circle from being squeezed */
   }
 
-  .confirmation-icons button {
-    background: transparent;
-    border: none;
-    font-size: 24px; /* Adjust size as needed */
-    cursor: pointer;
-    margin: 0 5px; /* Space between icons */
+  .confirmation-icons {
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap; /* Prevent wrapping of items */
+    flex-shrink: 0; /* Prevent the container from being squeezed */
   }
 </style>
