@@ -16,6 +16,10 @@
   let prevColor = '#000000';
   let changePrevColor = true;
 
+  let selectedColor = '#000000'; // Store the selected color
+  let showConfirmIcons = false; // Control visibility of accept/reject icons
+  let confirmIconPosition = { top: '0px', left: '0px' }; // Position for confirmation icons
+
   let eyeDropper = false;
   $: {
     drawingColor = hex; // the eyeDropper is hex, pass it on to the colorPicker
@@ -403,8 +407,31 @@
     cursorCanvas.add(mouseCursor);
     drawingCanvas.on('mouse:down', (evt) => {
       if (eyeDropper) {
-      changePrevColor = true;
-        toggleEyedropperState();
+        const mouse = drawingCanvas.getPointer(evt.e);
+        selectedColor = getColorAtPoint(mouse.x, mouse.y);
+        hex = selectedColor;
+        const svgIcon = document.getElementById('eyeDropper');
+        svgIcon.style.borderColor = selectedColor;
+
+        // Get coordinates based on event type
+        let pageX, pageY;
+        if (evt.e.type.startsWith('touch')) {
+          // Touch event - use first touch point
+          pageX = evt.e.touches[0].pageX;
+          pageY = evt.e.touches[0].pageY;
+        } else {
+          // Mouse event
+          pageX = evt.e.pageX;
+          pageY = evt.e.pageY;
+        }
+
+        // Update position
+        confirmIconPosition = {
+          top: `${pageY}px`,
+          left: `${pageX}px`,
+        };
+
+        showConfirmIcons = true;
       }
     });
 
@@ -1074,7 +1101,9 @@
       changeBrushSize(lineWidth);
     } else {
       if (!changePrevColor) {
+        // cancel the eyedropper
         hex = prevColor;
+        showConfirmIcons = false;
       }
       // Re-enable drawing mode when eyedropper is deactivated
       drawingCanvas.isDrawingMode = true;
@@ -1100,6 +1129,18 @@
     });
   }
 
+  // Function to accept the selected color
+  function acceptColor() {
+    // drawingColor = selectedColor;
+    prevColor = selectedColor;
+    showConfirmIcons = false; // Hide confirmation icons
+    toggleEyedropperState();
+  }
+
+  // Function to reject the selected color
+  function rejectColor() {
+    showConfirmIcons = false; // Hide confirmation icons
+  }
 
 </script>
 
@@ -1341,6 +1382,13 @@
       </div>
     {/if}
   </div>
+
+  {#if showConfirmIcons}
+    <div class="confirmation-icons" style="top: {confirmIconPosition.top}; left: {confirmIconPosition.left};">
+      <button on:click={acceptColor}>✔️</button> <!-- Accept icon -->
+      <button on:click={rejectColor}>❌</button> <!-- Reject icon -->
+    </div>
+  {/if}
 
 <style>
   /* scale slider */
@@ -1811,5 +1859,19 @@
       width: 28px;
       height: 28px;
     }
+  }
+
+  .confirmation-icons {
+    position: absolute; /* Position it appropriately */
+    z-index: 10; /* Ensure it's above other elements */
+    transform: translate(-50%, -100%); /* Center the icons above the cursor */
+  }
+
+  .confirmation-icons button {
+    background: transparent;
+    border: none;
+    font-size: 24px; /* Adjust size as needed */
+    cursor: pointer;
+    margin: 0 5px; /* Space between icons */
   }
 </style>
