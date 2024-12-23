@@ -1808,6 +1808,8 @@
       height: 86vh;
       margin-right: 0;       /* Changed from -0.8rem */
       background-color: #e0c1ff;
+      align-items: flex-end;
+      justify-content: start;
     }
 
     .currentSelected {
@@ -1819,8 +1821,8 @@
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      gap: clamp(4px, 1vw, 16px);
-      justify-content: end;
+      gap: clamp(4px, 2vw, 16px);
+      justify-content: center;
     }
 
     .brush-options-container .icon {
@@ -1835,6 +1837,18 @@
     .color-selection {
       flex-direction: row;
       align-items: center;
+    }
+
+    .range-selector-container {
+      max-width: 25dvw; 
+    }
+
+    .color-selection {
+      flex-direction: row;
+      align-items: center;
+      max-width: none; 
+      justify-content: center;
+      padding: 2px; 
     }
   }
 

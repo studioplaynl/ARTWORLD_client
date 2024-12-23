@@ -232,29 +232,35 @@
   .color-picker-container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    align-items: center;
+    gap: 8px;
+    align-items: flex-end;
     width: 100%;
   }
 
   .color-picker {
-    display: inline-block;
+    display: flex;
+    justify-content: flex-end;
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 0 0 1px rgba(0,0,0,0.1),
                 0 4px 12px rgba(0,0,0,0.1);
     touch-action: none;
+    margin-right: 4px;
+    width: 120px;
   }
   
   canvas {
     display: block;
     cursor: crosshair;
     touch-action: none;
+    width: 120px;
+    height: 120px;
   }
 
   .brightness-slider {
-    width: 100%;
-    padding: 0 10px;
+    width: 120px;
+    padding: 0;
+    margin-right: 4px;
   }
 
   input[type="range"] {
@@ -284,5 +290,13 @@
     border: 2px solid #666;
     border-radius: 50%;
     cursor: pointer;
+  }
+
+  :global(.color-picker) {
+    transform: none;
+  }
+
+  :global(.color-picker canvas) {
+    max-width: none;
   }
 </style>
