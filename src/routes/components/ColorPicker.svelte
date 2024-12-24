@@ -4,7 +4,7 @@
   
     export let color = '#000000';
     
-    let pickerSize = 200;
+    let pickerSize = 400;
     let canvas;
     let ctx;
     let isDragging = false;
@@ -84,13 +84,20 @@
     }
   
     function drawSelector() {
+      // Calculate radius based on canvas size
+      const selectorRadius = pickerSize * 0.05;  // 5% of canvas size
+      const innerRadius = selectorRadius * 0.9;   // Slightly smaller inner circle
+
+      // Draw outer white circle
       ctx.beginPath();
-      ctx.arc(selectedPoint.x, selectedPoint.y, 6, 0, Math.PI * 2);
+      ctx.arc(selectedPoint.x, selectedPoint.y, selectorRadius, 0, Math.PI * 2);
       ctx.strokeStyle = 'white';
       ctx.lineWidth = 2;
       ctx.stroke();
+      
+      // Draw inner black circle
       ctx.beginPath();
-      ctx.arc(selectedPoint.x, selectedPoint.y, 5, 0, Math.PI * 2);
+      ctx.arc(selectedPoint.x, selectedPoint.y, innerRadius, 0, Math.PI * 2);
       ctx.strokeStyle = 'black';
       ctx.lineWidth = 1;
       ctx.stroke();
@@ -246,54 +253,21 @@
                 0 4px 12px rgba(0,0,0,0.1);
     touch-action: none;
     margin-right: 4px;
-    width: 120px;
+    width: clamp(100px, 100%, 40dvw);
   }
   
   canvas {
     display: block;
     cursor: crosshair;
     touch-action: none;
-    width: 120px;
-    height: 120px;
+    width: clamp(100px, 100%, 40dvw);
+    height: clamp(100px, 100%, 40dvw);
   }
 
   .brightness-slider {
-    width: 120px;
+    width: clamp(100px, 100%, 40dvw);
     padding: 0;
     margin-right: 4px;
-  }
-
-  /* Portrait mode styles */
-  @media screen and (orientation: portrait) {
-      .color-picker-container {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .brightness-slider {
-      width: 80px;
-      height: 12px;
-      margin: 0;
-      padding: 0 8px;
-    }
-
-    input[type="range"] {
-      width: 80px;
-      transform: rotate(-90deg) translate(-90px, 0);
-      transform-origin: left top;
-    }
-  }
-
-  /* Landscape mode styles */
-  @media screen and (orientation: landscape) {
-    .color-picker-container {
-      flex-direction: column;
-    }
-
-    input[type="range"] {
-      width: 100%;
-    }
   }
 
   input[type="range"] {
@@ -332,4 +306,76 @@
   :global(.color-picker canvas) {
     max-width: none;
   }
+  
+  /* Portrait mode styles */
+  @media screen and (orientation: portrait) {
+    .color-picker-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      flex: 1;
+      gap: 8px;
+      padding: 0 8px;
+    }
+
+    .color-picker {
+      width: clamp(100px, 60vw, 30dvw);
+      margin: 0;
+    }
+
+    .brightness-slider {
+      width: 80px;
+      height: clamp(100px, 60vw, 30dvw);
+      margin: 0;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 80px;
+      transform: rotate(-90deg) translate(-50%, 0);
+      transform-origin: center left;
+    }
+  }
+
+  /* Landscape mode styles */
+  @media screen and (orientation: landscape) {
+    .color-picker-container {
+      flex-direction: column;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    .color-picker {
+      display: flex;
+      justify-content: flex-end;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.1),
+                  0 4px 12px rgba(0,0,0,0.1);
+      touch-action: none;
+      margin-right: 4px;
+      width: clamp(100px, 100%, 34dvh);
+    }
+    
+    canvas {
+      display: block;
+      cursor: crosshair;
+      touch-action: none;
+      width: clamp(100px, 100%, 34dvh);
+      height: clamp(100px, 100%, 34dvh);
+    }
+
+    .brightness-slider {
+      width: clamp(100px, 100%, 34dvh);
+      padding: 0;
+      margin-right: 4px;
+    }
+  }
+
+
 </style>

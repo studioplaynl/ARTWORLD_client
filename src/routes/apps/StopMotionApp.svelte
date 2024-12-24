@@ -288,8 +288,8 @@
     padding: 0;
     margin: 0;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: clamp(28px, 4vh, 40px);
+    height:  clamp(28px, 4vh, 40px);
   }
 
   .status.status--on {
@@ -309,7 +309,7 @@
   }
 
   .stopmotion_button img {
-    width: 40px;
+    width:  clamp(28px, 4vh, 40px);
   }
 
   .frames-list {
@@ -368,8 +368,8 @@
   /* Base frame styles */
   .frames-list .stopmotion__frame {
     display: block;
-    width: 48px;
-    min-height: 48px;
+    width:  clamp(40px, 5vh, 80px);
+    min-height:  clamp(40px, 5vh, 80px);
     margin: 4px;
     overflow: hidden;
     display: flex;
@@ -400,9 +400,7 @@
       width: 100vw;
       justify-content: flex-start;
       align-items: center;
-      height: 10dvh;
-      min-height: 22px;
-      max-height: 80px;
+      height: clamp(50px, 6vh, 100px);
       bottom: 0;
       position: relative;
     }
@@ -471,7 +469,6 @@
 
     .stopmotion__frame {
       width: clamp(28px, 4vh, 40px);
-      min-width: 28px;
       height: clamp(28px, 4vh, 40px);
       margin: 2px;
     }

@@ -1617,9 +1617,7 @@
 
   .icon,
   .tools-navbar button {
-    min-width: 32px;
-    width: calc(33.33% - 8px);
-    max-width: 50px;
+    width: clamp(24px, 4vh, 50px);
     height: auto;
     aspect-ratio: 1;
     padding: 2px;
@@ -1661,6 +1659,7 @@
   .eyedropper-container {
     position: relative;
     display: inline-block;
+    flex-shrink: 0;
   }
 
   .eyedropper-active-indicator {
@@ -1696,7 +1695,7 @@
     background-color: white;
     position: relative;
     overflow: hidden;
-    box-shadow: 3px 3px 0px #7300ed;
+    box-shadow: 2px 2px 0px #7300ed;
   }
 
   .canvas-box {
@@ -1752,6 +1751,26 @@
     padding: 8px;
   }
 
+  .color-preview {
+      width: 24px;
+      height: 24px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+      flex-shrink: 0; /* Prevent the circle from being squeezed */
+    }
+
+    .confirmation-icons {
+      position: absolute;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap; /* Prevent wrapping of items */
+      flex-shrink: 0; /* Prevent the container from being squeezed */
+    }
+    
   @media screen and (orientation: landscape) {
     .drawing-app-main-container {
       flex-direction: row;
@@ -1789,6 +1808,7 @@
       max-width: 60px;
       padding: 16px 0;
       overflow-y: auto;
+      flex-shrink: 0; /* Prevent navbar from shrinking */
     }
 
     .tools-container {
@@ -1796,7 +1816,8 @@
       display: flex;
       order: 1;
       align-self: flex-end;
-      margin-right: -2px;    /* Added to align with border */
+      margin-right: -2px;
+      max-width: 90%;
     }
 
     .tools-content {
@@ -1836,12 +1857,12 @@
 
     .color-selection {
       flex-direction: row;
-      align-items: center;
+      align-items: flex-start;
     }
 
-    .range-selector-container {
+    /* .range-selector-container {
       max-width: 25dvw; 
-    }
+    } */
 
     .color-selection {
       flex-direction: row;
@@ -1878,9 +1899,9 @@
       width: 95vw;
       height: auto;
       min-height: 0;
-      max-height: none;
+      max-height: 6dvh;
       padding: 0;
-      margin: 4px 0;
+      margin: 0;
     }
 
     .canvas-frame-container {
@@ -1896,6 +1917,7 @@
       display: flex;
       order: 2;
       flex-direction: column;
+      align-items: center;
       height: 100%;
     }
 
@@ -1915,14 +1937,13 @@
     .tools-navbar {
       flex-direction: row;
       order: 1;
-      background-color: rgb(115, 0, 237, 0.15);
       align-items: center;
       justify-content: center;
       gap: 1rem;
     }
 
     .currentSelected {
-      box-shadow: 4px 4px #7300ed;
+      box-shadow: 2px 2px #7300ed;
       border-radius: 50% 50% 0 0;
     }
 
@@ -1946,7 +1967,12 @@
     }
 
     .color-selection {
-      flex-direction: row;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-height: 60%;
+      padding: 0px 16px;
+      gap: 16px;
       align-items: center;
     }
 
@@ -1955,25 +1981,5 @@
       width: 28px;
       height: 28px;
     }
-  }
-
-    .color-preview {
-    width: 24px;
-    height: 24px;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
-    flex-shrink: 0; /* Prevent the circle from being squeezed */
-  }
-
-  .confirmation-icons {
-    position: absolute;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap; /* Prevent wrapping of items */
-    flex-shrink: 0; /* Prevent the container from being squeezed */
   }
 </style>
