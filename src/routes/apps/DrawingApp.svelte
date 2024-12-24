@@ -989,21 +989,21 @@
     a.click();
   }
 
-    async function downloadFlipbook() {
-      // we put the user name and displayName in the file name
-    // retrieve those details
-      const userProfile = get(Profile);
+  async function downloadFlipbook() {
+    // we put the user name and displayName in the file name
+  // retrieve those details
+    const userProfile = get(Profile);
 
-      let filename = `${userProfile.username}`;
-      // if a display_name exists we also add that to the filename
-      if (userProfile.display_name) {
-        filename += `_${userProfile.display_name}`;
-      }
-
-      filename += `_${file.key}_${displayName}`;
-
-      await saveFlipbookHandler(filename);
+    let filename = `${userProfile.username}`;
+    // if a display_name exists we also add that to the filename
+    if (userProfile.display_name) {
+      filename += `_${userProfile.display_name}`;
     }
+
+    filename += `_${file.key}_${displayName}`;
+
+    await saveFlipbookHandler(filename);
+  }
 
   // function Copy() {
   //   // clone what are you copying since you
@@ -1097,6 +1097,7 @@
         break;
     }
   }
+
   function changeBrushSize(newSize) {
     // Update the lineWidth variable
     lineWidth = newSize;
@@ -1463,7 +1464,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 4px 0px;
+    padding: 4px 5px;
     margin: 8px 0;
     position: relative;
   }
@@ -1472,7 +1473,7 @@
   .range-selector-container::before {
     content: '';
     position: absolute;
-    left: 0px;
+    left: 5px;
     right: 10px;
     height: 14px;
     background: linear-gradient(to right, 
@@ -1674,7 +1675,6 @@
     pointer-events: none;
   }
 
-  /* Ensure existing eyeDropper styles are maintained */
   #eyeDropper {
     min-width: 28px;
     width: 28px;
@@ -1719,14 +1719,14 @@
     position: relative;
     background-color: #e0c1ff;
     overflow: hidden;
-    padding: 4px;
-    box-shadow: 3px 3px 0px #7300ed;
+    padding: 0;
+    box-shadow: 2px 2px 0px #7300ed;
     width: fit-content;
     height: fit-content;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    margin: auto;
+    gap: 4px;
+    margin: 0;
   }
 
   button {
@@ -1857,7 +1857,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: start;
-      padding-top: 3rem;
+      padding-top: 2.6rem;
       width: 100%;
     }
 
@@ -1872,15 +1872,15 @@
     .stopmotion-controls {
       position: relative;
       background-color: #e0c1ff;
-      box-shadow: 3px 3px 0px #7300ed;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 91vw;
-      max-width: 92vw;
-      max-height: min-content;
-      padding: 4px;
-      margin: 0 auto;
+      width: 95vw;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      padding: 0;
+      margin: 4px 0;
     }
 
     .canvas-frame-container {

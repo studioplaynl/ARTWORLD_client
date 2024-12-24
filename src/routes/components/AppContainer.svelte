@@ -78,18 +78,18 @@
   .top-controls {
     position: fixed;
     left: 0.5rem;
-    top: 0.5rem;
+    top: 0.2rem;
     display: flex;
     gap: 1rem;
     z-index: 13;
   }
 
   .control-button {
-    max-width: 60px;
-    max-height: 60pix;
-    width: 2rem;
-    height: 2rem;
-    box-shadow: 3px 3px 0px #7300ed;
+    max-width: 50px;
+    max-height: 50px;
+    width: 1.7rem;
+    height: 1.7rem;
+    box-shadow: 2px 2px 0px #7300ed;
     cursor: pointer;
     padding: 0;
     margin: 0;

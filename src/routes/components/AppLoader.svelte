@@ -21,7 +21,6 @@
     setAvatar,
     getDateAndTimeFormatted,
     updateObject,
-    // updateTitle,
   } from '../../helpers/nakamaHelpers';
   import { PlayerHistory } from '../game/playerState';
   import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC, isValidApp, DEFAULT_APP } from '../../constants';

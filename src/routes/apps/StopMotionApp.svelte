@@ -215,10 +215,10 @@
   }
 
   .stopmotion__frame {
-    display: block;
-    width: 48px;
-    min-height: 48px;
-    margin: 4px;
+    width: clamp(28px, 4vh, 40px);
+    height: clamp(28px, 4vh, 40px);
+    min-height: 28px;
+    margin: 2px;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -227,6 +227,7 @@
     border: 2px solid #7300eb;
     cursor: pointer;
     border-radius: 8px;
+    flex-shrink: 0;
   }
 
   .stopmotion__frame:last-child {
@@ -243,8 +244,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 48px;
-    height: 48px;
+    width: 100%;
+    height: 100% !important;
     background-color: white;
     background-repeat: no-repeat;
     background-position: left top;
@@ -272,7 +273,6 @@
     height: 20px;
     line-height: 1;
     font-size: 16px;
-    z-index: 5;
     padding-left: 1px;
     padding-bottom: 3px;
   }
@@ -283,22 +283,21 @@
 
   .stopmotion_button {
     z-index: 13;
-    box-shadow: 3px 3px 0px #7300ed;
+    box-shadow: 2px 2px 0px #7300ed;
     cursor: pointer;
     padding: 0;
     margin: 0;
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    margin-left: 16px;
   }
 
   .status.status--on {
-    box-shadow: 3px 3px 0px #7300ed;
+    box-shadow: 2px 2px 0px #7300ed;
   }
 
   .status {
-    box-shadow: 3px 3px 0px rgba(115, 0, 237, 0.4);
+    box-shadow: 2px 2px 0px rgba(115, 0, 237, 0.4);
   }
 
   .status > img {
@@ -344,10 +343,53 @@
   }
 
   .add-frame-container {
-    padding: 8px;
-    flex-shrink: 0; /* Prevents the add button from shrinking */
+    padding: 1px;
+    position: sticky;
+    right: 0;
+    background-color: #e0c1ff;
+    flex-shrink: 0;
+    z-index: 5;
   }
 
+  .add-frame-container .stopmotion__frame {
+    border: none;
+  }
+
+  /* Make selected state more specific to ensure it applies */
+  .frames-list .stopmotion__frame.selected {
+    border-width: 4px;
+  }
+
+  /* Only remove border from add button */
+  .add-frame-container .stopmotion__frame {
+    border: none;
+  }
+
+  /* Base frame styles */
+  .frames-list .stopmotion__frame {
+    display: block;
+    width: 48px;
+    min-height: 48px;
+    margin: 4px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border: 2px solid #7300eb;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  /* Selected frame */
+  .frames-list .stopmotion__frame.selected {
+    border-width: 4px;
+  }
+
+  /* Only remove border from add button */
+  .add-frame-container .stopmotion__frame {
+    border: none;
+  }
   /* Update mobile styles */
   @media only screen and (orientation: portrait) {
     .stopmotion__frames {
@@ -358,7 +400,9 @@
       width: 100vw;
       justify-content: flex-start;
       align-items: center;
-      height: 48px;
+      height: 10dvh;
+      min-height: 22px;
+      max-height: 80px;
       bottom: 0;
       position: relative;
     }
@@ -412,8 +456,9 @@
       flex-direction: row;
       overflow-x: auto;
       overflow-y: hidden;
-      padding: 8px 0;
+      padding: 2px;
       flex-shrink: 0;
+      gap: 4px;
     }
 
     .add-frame-container {
@@ -425,55 +470,17 @@
     }
 
     .stopmotion__frame {
-      width: 32px;
-      min-width: 32px;
-      min-height: 32px;
-      flex-shrink: 0;
+      width: clamp(28px, 4vh, 40px);
+      min-width: 28px;
+      height: clamp(28px, 4vh, 40px);
+      margin: 2px;
     }
 
     .stopmotion__frame__background {
-      width: 32px;
-      height: 32px !important;
+      width: 100%;
+      height: 100% !important;
     }
   }
 
-  .add-frame-container .stopmotion__frame {
-    border: none;
-  }
 
-  /* Make selected state more specific to ensure it applies */
-  .frames-list .stopmotion__frame.selected {
-    border-width: 4px;
-  }
-
-  /* Only remove border from add button */
-  .add-frame-container .stopmotion__frame {
-    border: none;
-  }
-
-  /* Base frame styles */
-  .frames-list .stopmotion__frame {
-    display: block;
-    width: 48px;
-    min-height: 48px;
-    margin: 4px;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    border: 2px solid #7300eb;
-    cursor: pointer;
-    border-radius: 8px;
-  }
-
-  /* Selected frame */
-  .frames-list .stopmotion__frame.selected {
-    border-width: 4px;
-  }
-
-  /* Only remove border from add button */
-  .add-frame-container .stopmotion__frame {
-    border: none;
-  }
 </style>
