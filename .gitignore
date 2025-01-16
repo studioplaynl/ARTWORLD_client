@@ -8,5 +8,7 @@ dist/
 .DS_Store
 .env
 .env.build
+.env.build_artworld
+.env.build_betaworld
 .env.dev
 
