@@ -30,6 +30,27 @@ if (mode === 'dev') {
   fs.copyFileSync(path.join(__dirname, '.env.dev'), envPath);
   process.env.ENV_FILE = '.env.dev';
 
+} else if (mode === 'build') {
+  // Production build setup
+  const prodSvelteFile = path.join(__dirname, 'src', 'nakama_production.svelte');
+  fs.copyFileSync(prodSvelteFile, nakamaPath);
+  fs.copyFileSync(path.join(__dirname, '.env.build'), envPath);
+  process.env.ENV_FILE = '.env.build';
+
+  // Delete build files before new build
+  const filesToDelete = [
+    path.join(__dirname, 'public', 'index.html'),
+    path.join(__dirname, 'public', 'index.js'),
+    path.join(__dirname, 'public', 'index.css')
+  ];
+
+  filesToDelete.forEach(file => {
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file);
+      console.log(`Deleted: ${file}`);
+    }
+  });
+
 } else if (mode === 'build_artworld') {
   // Production build setup
   const prodSvelteFile = path.join(__dirname, 'src', 'nakama_production.svelte');
