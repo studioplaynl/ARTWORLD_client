@@ -3,6 +3,8 @@
 This is the repo for ARTWORLD, a game for kids to make and exhibit art in.
 ARTWORLD is a multi user game, so players see and can interact with each other.
 
+This is version 1.6 of the app. The most recent feature is the ability to customize the inside of a home with your own drawings and animations.
+
 ![Walk animation](public/assets/docs/gifs/walk_arond_animation.gif)
 
 ARTWORLD wants to support many art forms: drawing, stop motion animation, music, dance and poetry.
