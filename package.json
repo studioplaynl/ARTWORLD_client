@@ -31,7 +31,7 @@
     "prettier": "^3.2.5",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "svelte": "^4.2.12",
-    "vite": "^5.0.10"
+    "vite": "^6.4.5"
   },
   "dependencies": {
     "@heroiclabs/nakama-js": "^2.7.1",
@@ -42,10 +42,16 @@
     "jsqr": "^1.4.0",
     "phaser3-rex-plugins": "^1.60.8",
     "qrcode": "^1.5.3",
-    "qs": "^6.11.2",
+    "qs": "^6.16.1",
     "svelte-i18n": "^4.0.0",
     "svelte-icons": "^2.1.0",
     "svelte-select": "^5.8.3",
     "svelte-spa-router": "^4.0.0"
+  },
+  "overrides": {
+    "esbuild": "^0.25.0",
+    "i18next-http-backend": "^4.0.2",
+    "postcss-selector-parser": "^7.1.6",
+    "tar": "^7.5.3"
   }
 }
