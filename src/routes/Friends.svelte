@@ -1,6 +1,6 @@
 <script>
   import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
-  import FriendAction from './components/FriendAction.svelte';
+  import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
   import {
     ListFriends,
