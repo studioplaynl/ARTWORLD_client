@@ -34,8 +34,11 @@ if (mode === 'dev') {
   // Production build setup
   const prodSvelteFile = path.join(__dirname, 'src', 'nakama_production.svelte');
   fs.copyFileSync(prodSvelteFile, nakamaPath);
-  fs.copyFileSync(path.join(__dirname, '.env.build'), envPath);
-  process.env.ENV_FILE = '.env.build';
+  const buildEnv = fs.existsSync(path.join(__dirname, '.env.build'))
+    ? path.join(__dirname, '.env.build')
+    : path.join(__dirname, '.env.build_artworld');
+  fs.copyFileSync(buildEnv, envPath);
+  process.env.ENV_FILE = path.basename(buildEnv);
 
   // Delete build files before new build
   const filesToDelete = [
