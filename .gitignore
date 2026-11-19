@@ -11,4 +11,5 @@ dist/
 .env.build_artworld
 .env.build_betaworld
 .env.dev
+.specstory/
 
